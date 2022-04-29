@@ -33,7 +33,7 @@ export default class Start extends React.Component {
           style={styles.bgImg}
         >
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>Talk</Text>
+            <Text style={styles.title}>Hello World</Text>
           </View>
 
           <View style={styles.interactContainer}>
