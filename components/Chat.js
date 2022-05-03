@@ -16,7 +16,6 @@ export default class Chat extends React.Component {
       user: {
         _id: '',
         name: '',
-        avatar: '',
       },
     };
 
@@ -50,7 +49,6 @@ export default class Chat extends React.Component {
         user: {
           _id: data.user._id,
           name: data.user.name,
-          avatar: data.user.avatar,
         },
       });
     });
@@ -86,10 +84,6 @@ export default class Chat extends React.Component {
   componentDidMount() {
     let name = this.props.route.params.name;
 
-    this.referenceChatMessages = firebase
-    .firestore()
-    .collection('messages');
-
     this.authUnsubscribe = firebase
     .auth()
     .onAuthStateChanged(async (user) => {
@@ -103,7 +97,6 @@ export default class Chat extends React.Component {
         user: {
           _id: user.uid,
           name: name,
-          avatar: 'https://placeimg.com/140/140/any',
         },
       });
 
@@ -111,6 +104,11 @@ export default class Chat extends React.Component {
     this.unsubscribe = this.referenceChatMessages
     .orderBy('createdAt', 'desc')
     .onSnapshot(this.onCollectionUpdate);
+
+    this.referenceUser = firebase
+    .firestore()
+    .collection('messages')
+    .where('uid', '==', this.state.uid);
 
     })
   };
@@ -154,7 +152,6 @@ export default class Chat extends React.Component {
           user={{
             _id: this.state.user._id,
             name: this.state.name,
-            avatar: this.state.avatar
           }}
           onSend={(messages) => this.onSend(messages)}
         />
