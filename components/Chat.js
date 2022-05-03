@@ -18,7 +18,6 @@ export default class Chat extends React.Component {
       user: {
         _id: '',
         name: '',
-        avatar: '',
       },
       isConnected: false,
     };
@@ -88,7 +87,6 @@ export default class Chat extends React.Component {
         user: {
           _id: data.user._id,
           name: data.user.name,
-          avatar: data.user.avatar,
         },
       });
     });
@@ -150,7 +148,6 @@ export default class Chat extends React.Component {
             user: {
               _id: user.uid,
               name: name,
-              avatar: 'https://placeimg.com/140/140/any',
             },
           });
 
@@ -228,11 +225,11 @@ export default class Chat extends React.Component {
         <GiftedChat
           renderBubble={this.renderBubble.bind(this)}
           messages={this.state.messages}
+          renderUsernameOnMessage={true}
           renderInputToolbar={this.renderInputToolbar.bind(this)}
           user={{
             _id: this.state.user._id,
             name: this.state.name,
-            avatar: this.state.avatar
           }}
           onSend={(messages) => this.onSend(messages)}
         />
