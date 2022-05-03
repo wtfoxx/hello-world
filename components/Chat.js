@@ -64,16 +64,15 @@ export default class Chat extends React.Component {
     const messages = this.state.messages[0];
     this.referenceChatMessages.add({
       _id: messages._id,
-      text: messages.text || '',
+      text: messages.text,
       createdAt: messages.createdAt,
       user: this.state.user,
-      image: messages.images || '',
     });
   }
 
   //Function to dictate the functionality of sending messages
   onSend(messages = []) {
-    this.setState(previousState => ({
+    this.setState((previousState) => ({
       messages: GiftedChat.append(previousState.messages, messages),
     }),
     () => {
@@ -91,9 +90,6 @@ export default class Chat extends React.Component {
     .firestore()
     .collection('messages');
 
-    this.unsubscribe = this.referenceChatMessages
-    .onSnapshot(this.onCollectionUpdate);
-
     this.authUnsubscribe = firebase
     .auth()
     .onAuthStateChanged(async (user) => {
@@ -110,6 +106,11 @@ export default class Chat extends React.Component {
           avatar: 'https://placeimg.com/140/140/any',
         },
       });
+
+      
+    this.unsubscribe = this.referenceChatMessages
+    .orderBy('createdAt', 'desc')
+    .onSnapshot(this.onCollectionUpdate);
 
     })
   };
