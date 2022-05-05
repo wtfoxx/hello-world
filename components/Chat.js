@@ -1,11 +1,13 @@
 import React from "react";
-import { View, Text, Platform, KeyboardAvoidingView } from "react-native";
+import { View, Text, Platform, KeyboardAvoidingView, Button } from "react-native";
 import { Bubble, GiftedChat, InputToolbar, SystemMessage } from "react-native-gifted-chat";
 import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import NetInfo from '@react-native-community/netinfo'
+import NetInfo from '@react-native-community/netinfo';
+import MapView from "react-native-maps";
+import CustomActions from "./CustomActions";
 
 
 export default class Chat extends React.Component {
@@ -20,6 +22,8 @@ export default class Chat extends React.Component {
         name: '',
       },
       isConnected: false,
+      image: null,
+      location: null,
     };
 
     const firebaseConfig = {
@@ -88,6 +92,8 @@ export default class Chat extends React.Component {
           _id: data.user._id,
           name: data.user.name,
         },
+        image: data.image || null,
+        location: data.location || null,
       });
     });
 
@@ -105,6 +111,8 @@ export default class Chat extends React.Component {
       text: messages.text,
       createdAt: messages.createdAt,
       user: this.state.user,
+      image: messages.image,
+      location: messages.location,
     });
   };
 
@@ -213,6 +221,30 @@ export default class Chat extends React.Component {
     )
   };
 
+  renderCustomActions(props) {
+    return <CustomActions {...props} />;
+  }
+
+  renderCustomView(props) {
+    const { currentMessage } = props;
+    if (currentMessage.location) {
+      return (
+        <View style={{ borderRadius: 13, overflow: 'hidden', margin: 3 }}>
+          <MapView
+            style={{ width: 150, height: 100 }}
+            region={{
+              latitude: currentMessage.location.latitude,
+              longitude: currentMessage.location.longitude,
+              latitudeDelta: 0.0922,
+              longitudeDelta: 0.0421
+            }}
+          />
+        </View>
+      );
+    }
+    return null;
+  }
+
 
   render() {
 
@@ -223,6 +255,8 @@ export default class Chat extends React.Component {
     return (
       <View style={{flex:1}}>
         <GiftedChat
+          renderActions={this.renderCustomActions}
+          renderCustomView={this.renderCustomView}
           renderBubble={this.renderBubble.bind(this)}
           messages={this.state.messages}
           renderUsernameOnMessage={true}
@@ -232,6 +266,7 @@ export default class Chat extends React.Component {
             name: this.state.name,
           }}
           onSend={(messages) => this.onSend(messages)}
+          placeholder='Type a message'
         />
         { Platform.OS === 'android' ? <KeyboardAvoidingView behavior="height" /> : null }
       </View>
