@@ -1,10 +1,10 @@
-import React from "react";
+import React from 'react';
 import PropTypes from 'prop-types';
-import { StyleSheet, View, TouchableOpacity, Text } from "react-native-web";
+import { StyleSheet, View, TouchableOpacity, Text } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import * as Permissions from 'expo-permissions';
 import * as Location from 'expo-location';
-import firebase from "firebase/compat/app";
+import firebase from 'firebase/compat/app';
 import 'firebase/compat/firestore';
 import 'firebase/compat/auth';
 
@@ -19,10 +19,10 @@ export default class CustomActions extends React.Component {
         }).catch((error) => {
           console.error(error);
         });
-      if (!result.cancelled) {
-        const imageUrl = await this.uploadImage(result.uri);
-        this.props.onSend({ image: imageUrl });
-      }
+        if (!result.cancelled) {
+          const imageUrl = await this.uploadImage(result.uri);
+          this.props.onSend({ image: imageUrl });
+        }
       }
     } catch (error) {
       console.error(error);
@@ -42,10 +42,10 @@ export default class CustomActions extends React.Component {
         }).catch((error) => {
           console.error(error);
         });
-      if (!result.cancelled) {
-        const imageUrl = await this.uploadImage(result.uri);
-        this.props.onSend({ image: imageUrl });
-      }
+        if (!result.cancelled) {
+          const imageUrl = await this.uploadImage(result.uri);
+          this.props.onSend({ image: imageUrl });
+        }
       }
     } catch (error) {
       console.error(error);
@@ -57,19 +57,21 @@ export default class CustomActions extends React.Component {
     const { status } = await Location.requestForegroundPermissionsAsync();
     try {
       if (status === 'granted') {
-        let result = await Location.getCurrentPositionAsync({})
-          .catch((error) => {
+        let result = await Location.getCurrentPositionAsync({}).catch(
+          (error) => {
             console.error(error);
+          }
+        );
+        // Send latitude and longitude to locate the position on the map
+        if (result) {
+          console.log(result);
+          this.props.onSend({
+            location: {
+              longitude: result.coords.longitude,
+              latitude: result.coords.latitude,
+            },
           });
-      if (result) {
-        console.log(result);
-        this.props.onSend({
-          location: {
-            longitude: result.coords.longitude,
-            latitude: result.coords.latitude,
-          },
-        });
-      }
+        }
       }
     } catch (error) {
       console.error(error);
@@ -102,7 +104,7 @@ export default class CustomActions extends React.Component {
     blob.close();
 
     return await snapshot.ref.getDownloadURL();
-  }
+  };
 
   onActionpress = () => {
     const options = [
@@ -137,8 +139,8 @@ export default class CustomActions extends React.Component {
     return (
       <TouchableOpacity
         accessible={true}
-        accessibilityLabel='Share options'
-        accessibilityHint='Choose to send an image, take a picture or share location'
+        accessibilityLabel="Share options"
+        accessibilityHint="Choose to send an image, take a picture or share location"
         style={styles.container}
         onPress={this.onActionpress}
       >
@@ -146,7 +148,7 @@ export default class CustomActions extends React.Component {
           <Text style={[styles.iconText, this.props.iconTextStyle]}>+</Text>
         </View>
       </TouchableOpacity>
-    )
+    );
   }
 }
 
